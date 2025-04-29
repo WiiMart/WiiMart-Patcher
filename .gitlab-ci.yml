@@ -34,7 +34,6 @@ build-all-platforms:
     
     # Generate checksums
     - sha256sum bin/* > bin/checksums.txt
-    - ./WSC-Patcher wiimart.org
   artifacts:
     paths:
       - bin/
