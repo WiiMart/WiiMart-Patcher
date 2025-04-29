@@ -1,0 +1,44 @@
+stages:
+  - build
+
+variables:
+  CGO_ENABLED: "0"
+  PROJECT_NAME: "WiiMart-Patcher"
+  # Custom GOPATH for better cache control
+  GOPATH: "${CI_PROJECT_DIR}/.go"
+  # Enable Go module caching
+  GO_MOD_CACHE: "${CI_PROJECT_DIR}/.go/pkg/mod"
+  # Enable build cache
+  GOCACHE: "${CI_PROJECT_DIR}/.cache/go-build"
+
+build-all-platforms:
+  stage: build
+  tags:
+    - golang  # Your self-hosted runner tag
+  image: golang:latest
+  script:
+    - mkdir -p bin
+    - mkdir -p "${GOCACHE}"
+    
+    # Linux builds
+    - GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o bin/${PROJECT_NAME}-linux-amd64 ./...
+    - GOOS=linux GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o bin/${PROJECT_NAME}-linux-arm64 ./...
+    
+    # Windows builds
+    - GOOS=windows GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o bin/${PROJECT_NAME}-windows-amd64.exe ./...
+    - GOOS=windows GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o bin/${PROJECT_NAME}-windows-arm64.exe ./...
+    
+    # macOS builds
+    - GOOS=darwin GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o bin/${PROJECT_NAME}-darwin-amd64 ./...
+    - GOOS=darwin GOARCH=arm64 go build -trimpath -ldflags="-s -w" -o bin/${PROJECT_NAME}-darwin-arm64 ./...
+    
+    # Generate checksums
+    - sha256sum bin/* > bin/checksums.txt
+  artifacts:
+    paths:
+      - bin/
+  cache:
+    paths:
+      - .go/pkg/mod
+      - .cache/go-build
+    key: ${CI_JOB_NAME}
