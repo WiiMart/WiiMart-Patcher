@@ -34,7 +34,6 @@ build-all-platforms:
     
     # Generate checksums
     - sha256sum bin/* > bin/checksums.txt
-    - ./bin/bin/WiiMart-Patcher-linux-amd64 wiimart.org
   artifacts:
     paths:
       - bin/
