@@ -3,15 +3,16 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io/fs"
+	"io/ioutil"
+	"log"
+	"os"
+
 	"github.com/logrusorgru/aurora/v3"
 	"github.com/wii-tools/GoNUSD"
 	"github.com/wii-tools/arclib"
 	"github.com/wii-tools/powerpc"
 	"github.com/wii-tools/wadlib"
-	"io/fs"
-	"io/ioutil"
-	"log"
-	"os"
 )
 
 // baseDomain holds our needed base domain.
@@ -51,6 +52,10 @@ func main() {
 		fmt.Println("The given base domain must not exceed 12 characters.")
 		fmt.Println("For more information, please refer to the README.")
 		os.Exit(-1)
+	}
+
+	for len(baseDomain) < 12 {
+		baseDomain += "\x00"
 	}
 
 	fmt.Println("===========================")
