@@ -28,7 +28,7 @@ https://*.oscwii.org/*
 miip:*
 
 [exclude]
-*`, baseDomain)
+*`, string(bytes.ReplaceAll([]byte(baseDomain), []byte("\x00"), []byte("")))) //replace all 00s with nothing to allow the shop to connect to the website
 
 	// Replace UNIX line (LR) returns with that of Windows (CRLF).
 	output := bytes.ReplaceAll([]byte(filter), []byte("\n"), []byte("\r\n"))
